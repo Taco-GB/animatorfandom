@@ -1,206 +1,475 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Animatör Şehri Fandom</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animatör Şehri Wiki</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1e1e2f;
-            color: #ddd;
+        /* TEMEL STİLLER */
+        :root {
+            --primary: #6a5acd;
+            --secondary: #9370db;
+            --dark: #1e1e2f;
+            --light: #f8f9fa;
+            --accent: #f0e68c;
+            --text: #e0e0e0;
+            --card-bg: #2a2a44;
+        }
+        
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
         }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(42, 42, 68, 0.8) 0%, rgba(30, 30, 47, 0.9) 90%);
+        }
+        
+        /* HEADER */
         header {
-            background: #3a3a5c;
-            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem;
             text-align: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #f0e68c;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
         }
+        
+        header h1 {
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        /* NAVIGASYON */
         nav {
-            background: #2a2a44;
             display: flex;
             justify-content: center;
-            gap: 25px;
-            padding: 15px 0;
+            background: rgba(42, 42, 68, 0.9);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         nav a {
-            color: #ccc;
+            color: var(--text);
             text-decoration: none;
+            padding: 0.5rem 1.5rem;
+            margin: 0 0.5rem;
+            border-radius: 50px;
             font-weight: 600;
             font-size: 1.1rem;
-            transition: color 0.3s ease;
         }
-        nav a:hover {
-            color: #f0e68c;
+        
+        nav a:hover, nav a.active {
+            background: rgba(106, 90, 205, 0.3);
+            color: var(--accent);
+            transform: translateY(-2px);
         }
+        
+        /* ARAMA ÇUBUĞU */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem;
+            background: rgba(30, 30, 47, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #search {
+            width: 60%;
+            max-width: 500px;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        #search::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* ANA İÇERİK */
         main {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 20px;
+            min-height: calc(100vh - 300px);
+            padding: 2rem;
         }
-        h1, h2, h3 {
-            color: #f0e68c;
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        section {
-            margin-bottom: 40px;
-            background: #2a2a44;
-            padding: 20px;
-            border-radius: 10px;
+        
+        .page.active {
+            display: block;
         }
-        ul {
-            list-style-type: none;
-            padding-left: 0;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        ul li {
-            margin-bottom: 8px;
+        
+        /* KART TASARIMLARI */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        footer {
-            background: #3a3a5c;
-            color: #ccc;
+        
+        .card h2 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+        
+        /* BÖLÜM LİSTESİ */
+        .episode-container {
+            margin-top: 2rem;
+        }
+        
+        .season-title {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .episode-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .episode-card {
+            background: rgba(42, 42, 68, 0.7);
+            border-radius: 8px;
+            padding: 1.2rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .episode-card h3 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .episode-card a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* KARAKTER LİSTESİ */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .character-card {
+            background: rgba(42, 42, 68, 0.7);
+            border-radius: 8px;
+            padding: 1.5rem;
             text-align: center;
-            padding: 15px;
-            font-size: 0.9rem;
+            border-top: 4px solid var(--primary);
         }
-        a.external-link {
-            color: #f0e68c;
+        
+        .character-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 3px solid var(--secondary);
+        }
+        
+        /* FOOTER */
+        footer {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap;
+            }
+            
+            nav a {
+                padding: 0.5rem 1rem;
+                margin: 0.3rem;
+                font-size: 0.9rem;
+            }
+            
+            .episode-list, .character-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <header>Animatör Şehri Fandom</header>
+    <!-- HEADER -->
+    <header>
+        <h1>Animatör Şehri Wiki</h1>
+    </header>
+    
+    <!-- NAVIGASYON -->
     <nav>
-        <a href="#anasayfa">Ana Sayfa</a>
-        <a href="#karakterler">Karakterler</a>
-        <a href="#bolumler">Bölümler</a>
-        <a href="#sezonlar">Sezonlar</a>
-        <a href="#yaratici">Yaratıcı</a>
-        <a href="#topluluk">Topluluk</a>
+        <a href="#" class="nav-link active" data-page="home">Ana Sayfa</a>
+        <a href="#" class="nav-link" data-page="episodes">Bölümler</a>
+        <a href="#" class="nav-link" data-page="characters">Karakterler</a>
+        <a href="#" class="nav-link" data-page="seasons">Sezonlar</a>
+        <a href="#" class="nav-link" data-page="creator">Yaratıcı</a>
     </nav>
+    
+    <!-- ANA İÇERİK -->
     <main>
-        <section id="anasayfa">
-            <h1>Hoşgeldiniz!</h1>
-            <p>
-                Animatör Şehri, Animatör Sinan Erdem isimli YouTube kanalı tarafından hazırlanan ve hala aktif olarak yayınlanmaya devam eden, 
-                51 bölüm, 3 sezon ve 3 fragmandan oluşan komedi-macera animasyon serisidir. Yayınlanmaya 5 Eylül 2022 tarihinde başlamıştır.
-            </p>
-        </section>
-
-        <section id="karakterler">
-            <h2>Karakterler</h2>
-            <ul>
-                <li><strong>Sinan :</strong> Sinan, serinin yaratıcısı ve aynı zamanda Animatör Şehri'nin baş karakteridir. Karakterin kendine ait bir konuşma tarzı vardır.</li>
-                <!-- İstersen gerçek karakter isimleri ve açıklamalarını buraya ekleyebilirsin -->
-            </ul>
-        </section>
-
-        <section id="bolumler">
-            <h2>Bölümler</h2>
+        <!-- ANA SAYFA -->
+        <div class="page active" id="home">
+            <div class="card">
+                <h2>Hoş Geldiniz!</h2>
+                <p>Animatör Şehri, Animatör Sinan Erdem tarafından yaratılan ve YouTube'da yayınlanan bir komedi-macera animasyon serisidir. 2022'de yayınlanmaya başlanan seri 51 bölüm ve 3 sezondan oluşmaktadır. -Bu bölümleri izlemek isterseniz -Bölümler- sayfasına bakabilirsiniz. .</p>
+                <p>Bu web sayfası, Taco isimli Animatör Şehri izleyicisi tarafından hazırlanmıştır. Taco ile iletişime geçmek isterseniz, Yaratıcı bölümünden iletişim bilgilerini alabilirsiniz. </p>
+            </div>
             
-            <!-- Sezon 1 -->
-            <h3>Sezon 1</h3>
-            <ul>
-                <li><a href="https://www.youtube.com/watch?v=DwwcF2GI6z0" target="_blank" class="external-link">Sezon 1 Bölüm 1</a></li>
-                <li><a href="https://www.youtube.com/watch?v=LqUvyCiWf1Q" target="_blank" class="external-link">Sezon 1 Bölüm 2</a></li>
-                <li><a href="https://www.youtube.com/watch?v=cbsPbJBEDos" target="_blank" class="external-link">Sezon 1 Bölüm 3</a></li>
-                <li><a href="https://www.youtube.com/watch?v=tqYrTKvrm3M" target="_blank" class="external-link">Sezon 1 Bölüm 4</a></li>
-                <li><a href="https://www.youtube.com/watch?v=4zzWJ0k_o9g" target="_blank" class="external-link">Sezon 1 Bölüm 5</a></li>
-                <li><a href="https://www.youtube.com/watch?v=vK24A4pOscU" target="_blank" class="external-link">Sezon 1 Bölüm 6</a></li>
-                <li><a href="https://www.youtube.com/watch?v=m_8Z6boolCg" target="_blank" class="external-link">Sezon 1 Bölüm 7</a></li>
-                <li><a href="https://www.youtube.com/watch?v=ssHLq8o3ey4" target="_blank" class="external-link">Sezon 1 Bölüm 8</a></li>
-                <li><a href="https://www.youtube.com/watch?v=R3nmU606NRs" target="_blank" class="external-link">Sezon 1 Bölüm 9</a></li>
-                <li><a href="https://www.youtube.com/watch?v=bm1HEtZc9dY" target="_blank" class="external-link">Sezon 1 Bölüm 10</a></li>
-                <li><a href="https://www.youtube.com/watch?v=VQTa3t11GZo" target="_blank" class="external-link">Sezon 1 Bölüm 11</a></li>
-                <li><a href="https://www.youtube.com/watch?v=0b02EjQqIVc" target="_blank" class="external-link">Sezon 1 Bölüm 12</a></li>
-                <li><a href="https://www.youtube.com/watch?v=tLMu4LqCkjc" target="_blank" class="external-link">Sezon 1 Bölüm 13</a></li>
-                <li><a href="https://www.youtube.com/watch?v=pjPS4dDRJkw" target="_blank" class="external-link">Sezon 1 Bölüm 14</a></li>
-                <li><a href="https://www.youtube.com/watch?v=yVMm5bGKrko" target="_blank" class="external-link">Sezon 1 Bölüm 15</a></li>
-                <li><a href="https://www.youtube.com/watch?v=H4x-o5UWzJQ" target="_blank" class="external-link">Sezon 1 Bölüm 16</a></li>
-                <li><a href="https://www.youtube.com/watch?v=LsX7B9pB36U" target="_blank" class="external-link">Sezon 1 Bölüm 17</a></li>
-                <li><a href="https://www.youtube.com/watch?v=PKv3ZnzQP5I" target="_blank" class="external-link">Sezon 1 Bölüm 18</a></li>
-            </ul>
+            <div class="card">
+                <h2>Son Eklenenler</h2>
+                <div class="episode-list">
+                    <div class="episode-card">
+                        <h3>Sezon 3 Bölüm 11 (Şeker Krizi) </h3>
+                        <a href="https://www.youtube.com/watch?v=GGlXbXaGyXs" target="_blank">İzle</a>
+                    </div>
+                    <div class="episode-card">
+                        <h3>Sezon 2 Bölüm 13 (Cinayet)</h3>
+                        <a href="https://www.youtube.com/watch?v=3XTdQWzKxuQ" target="_blank">İzle</a>
+                    </div>
+                    <div class="episode-card">
+                        <h3>Sezon 1 Bölüm 1 (Issız Ada) </h3>
+                        <a href="https://www.youtube.com/watch?v=DwwcF2GI6z0" target="_blank">İzle</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- BÖLÜMLER SAYFASI -->
 
-            <!-- Sezon 2 -->
-            <h3>Sezon 2</h3>
-            <ul>
-                <li><a href="https://www.youtube.com/watch?v=NNFCdPd9oDI" target="_blank" class="external-link">Sezon 2 Bölüm 1</a></li>
-                <li><a href="https://www.youtube.com/watch?v=-IBErWGS2_c" target="_blank" class="external-link">Sezon 2 Bölüm 2</a></li>
-                <li><a href="https://www.youtube.com/watch?v=PwyeME476ME" target="_blank" class="external-link">Sezon 2 Bölüm 3</a></li>
-                <li><a href="https://www.youtube.com/watch?v=2jgK21lAJOw" target="_blank" class="external-link">Sezon 2 Bölüm 4</a></li>
-                <li><a href="https://www.youtube.com/watch?v=VKyIo4CGNM8" target="_blank" class="external-link">Sezon 2 Bölüm 5</a></li>
-                <li><a href="https://www.youtube.com/watch?v=zlClYy2lQwA" target="_blank" class="external-link">Sezon 2 Bölüm 6</a></li>
-                <li><a href="https://www.youtube.com/watch?v=_jVSKo6agpY" target="_blank" class="external-link">Sezon 2 Bölüm 7</a></li>
-                <li><a href="https://www.youtube.com/watch?v=F1czOVQnL5E" target="_blank" class="external-link">Sezon 2 Bölüm 8</a></li>
-                <li><a href="https://www.youtube.com/watch?v=u7Wgp4eHnBY" target="_blank" class="external-link">Sezon 2 Bölüm 9</a></li>
-                <li><a href="https://www.youtube.com/watch?v=CWk_s2O85go" target="_blank" class="external-link">Sezon 2 Bölüm 10</a></li>
-                <li><a href="https://www.youtube.com/watch?v=P5QNUoCf3Yk" target="_blank" class="external-link">Sezon 2 Bölüm 11</a></li>
-                <li><a href="https://www.youtube.com/watch?v=PYON-fiab6Y" target="_blank" class="external-link">Sezon 2 Bölüm 12</a></li>
-                <li><a href="https://www.youtube.com/watch?v=3XTdQWzKxuQ" target="_blank" class="external-link">Sezon 2 Bölüm 13</a></li>
-                <li><a href="https://www.youtube.com/watch?v=_G758Jy5slg" target="_blank" class="external-link">Sezon 2 Bölüm 14</a></li>
-                <li><a href="https://www.youtube.com/watch?v=RNZ8x-kZB5s" target="_blank" class="external-link">Sezon 2 Bölüm 15</a></li>
-                <li><a href="https://www.youtube.com/watch?v=Xy0ls4v_u3k" target="_blank" class="external-link">Sezon 2 Bölüm 16</a></li>
-                <li><a href="https://www.youtube.com/watch?v=rMZwUdivvnM" target="_blank" class="external-link">Sezon 2 Bölüm 17</a></li>
-                <li><a href="https://www.youtube.com/watch?v=jGZSn9KzFxY" target="_blank" class="external-link">Sezon 2 Bölüm 18</a></li>
-                <li><a href="https://www.youtube.com/watch?v=ffaebYQefBo" target="_blank" class="external-link">Sezon 2 Bölüm 19</a></li>
-                <li><a href="https://www.youtube.com/watch?v=BuKD1kGgOLs" target="_blank" class="external-link">Sezon 2 Bölüm 20</a></li>
-                <li><a href="https://www.youtube.com/watch?v=KincOXwsxK4" target="_blank" class="external-link">Sezon 2 Bölüm 21</a></li>
-            </ul>
+<div class="page" id="episodes">
+    <div class="card">
+        <h2>Tüm Bölümler</h2>
+        
+        <!-- SEZON 1 (18 Bölüm) -->
+        <h3 class="season-title">SEZON 1 (18 Bölüm)</h3>
+        <div class="episode-list">
+            <div class="episode-card"><h3>Bölüm 1</h3><a href="https://www.youtube.com/watch?v=DwwcF2GI6z0" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 2</h3><a href="https://www.youtube.com/watch?v=LqUvyCiWf1Q" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 3</h3><a href="https://www.youtube.com/watch?v=cbsPbJBEDos" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 4</h3><a href="https://www.youtube.com/watch?v=tqYrTKvrm3M" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 5</h3><a href="https://www.youtube.com/watch?v=4zzWJ0k_o9g" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 6</h3><a href="https://www.youtube.com/watch?v=vK24A4pOscU" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 7</h3><a href="https://www.youtube.com/watch?v=m_8Z6boolCg" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 8</h3><a href="https://www.youtube.com/watch?v=ssHLq8o3ey4" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 9</h3><a href="https://www.youtube.com/watch?v=R3nmU606NRs" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 10</h3><a href="https://www.youtube.com/watch?v=bm1HEtZc9dY" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 11</h3><a href="https://www.youtube.com/watch?v=VQTa3t11GZo" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 12</h3><a href="https://www.youtube.com/watch?v=0b02EjQqIVc" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 13</h3><a href="https://www.youtube.com/watch?v=tLMu4LqCkjc" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 14</h3><a href="https://www.youtube.com/watch?v=pjPS4dDRJkw" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 15</h3><a href="https://www.youtube.com/watch?v=yVMm5bGKrko" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 16</h3><a href="https://www.youtube.com/watch?v=H4x-o5UWzJQ" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 17</h3><a href="https://www.youtube.com/watch?v=LsX7B9pB36U" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 18</h3><a href="https://www.youtube.com/watch?v=PKv3ZnzQP5I" target="_blank">İzle</a></div>
+        </div>
 
-            <!-- Sezon 3 -->
-            <h3>Sezon 3</h3>
-            <ul>
-                <li><a href="https://www.youtube.com/watch?v=u5oLtQ0JuUA" target="_blank" class="external-link">Sezon 3 Bölüm 1</a></li>
-                <li><a href="https://www.youtube.com/watch?v=DQsCwpz0GTY" target="_blank" class="external-link">Sezon 3 Bölüm 2</a></li>
-                <li><a href="https://www.youtube.com/watch?v=vLk4P2OB8DI" target="_blank" class="external-link">Sezon 3 Bölüm 3</a></li>
-                <li><a href="https://www.youtube.com/watch?v=4bjWtGHIc2c" target="_blank" class="external-link">Sezon 3 Bölüm 4</a></li>
-                <li><a href="https://www.youtube.com/watch?v=0KZkSsNcX2s" target="_blank" class="external-link">Sezon 3 Bölüm 5</a></li>
-                <li><a href="https://www.youtube.com/watch?v=lSFwyD5UEf8" target="_blank" class="external-link">Sezon 3 Bölüm 6</a></li>
-                <li><a href="https://www.youtube.com/watch?v=j-1OjsjrExI" target="_blank" class="external-link">Sezon 3 Bölüm 7</a></li>
-                <li><a href="https://www.youtube.com/watch?v=srpGqR2JuQ8" target="_blank" class="external-link">Sezon 3 Bölüm 8</a></li>
-                <li><a href="https://www.youtube.com/watch?v=4KqrhYoa3FU" target="_blank" class="external-link">Sezon 3 Bölüm 9</a></li>
-                <li><a href="https://www.youtube.com/watch?v=xxvxDbwBCg8" target="_blank" class="external-link">Sezon 3 Bölüm 10</a></li>
-                <li><a href="https://www.youtube.com/watch?v=GGlXbXaGyXs" target="_blank" class="external-link">Sezon 3 Bölüm 11</a></li>
-            </ul>
-        </section>
+        <!-- SEZON 2 (21 Bölüm) -->
+        <h3 class="season-title">SEZON 2 (21 Bölüm)</h3>
+        <div class="episode-list">
+            <div class="episode-card"><h3>Bölüm 1</h3><a href="https://www.youtube.com/watch?v=NNFCdPd9oDI" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 2</h3><a href="https://www.youtube.com/watch?v=-IBErWGS2_c" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 3</h3><a href="https://www.youtube.com/watch?v=PwyeME476ME" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 4 (Şanslı)</h3><a href="https://www.youtube.com/watch?v=2jgK21lAJOw" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 5</h3><a href="https://www.youtube.com/watch?v=VKyIo4CGNM8" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 6</h3><a href="https://www.youtube.com/watch?v=zlClYy2lQwA" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 7</h3><a href="https://www.youtube.com/watch?v=_jVSKo6agpY" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 8</h3><a href="https://www.youtube.com/watch?v=F1czOVQnL5E" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 9</h3><a href="https://www.youtube.com/watch?v=u7Wgp4eHnBY" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 10</h3><a href="https://www.youtube.com/watch?v=CWk_s2O85go" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 11</h3><a href="https://www.youtube.com/watch?v=P5QNUoCf3Yk" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 12</h3><a href="https://www.youtube.com/watch?v=PYON-fiab6Y" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 13 (Cinayet)</h3><a href="https://www.youtube.com/watch?v=3XTdQWzKxuQ" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 14</h3><a href="https://www.youtube.com/watch?v=_G758Jy5slg" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 15</h3><a href="https://www.youtube.com/watch?v=RNZ8x-kZB5s" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 16</h3><a href="https://www.youtube.com/watch?v=Xy0ls4v_u3k" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 17</h3><a href="https://www.youtube.com/watch?v=rMZwUdivvnM" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 18</h3><a href="https://www.youtube.com/watch?v=jGZSn9KzFxY" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 19</h3><a href="https://www.youtube.com/watch?v=ffaebYQefBo" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 20</h3><a href="https://www.youtube.com/watch?v=BuKD1kGgOLs" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 21</h3><a href="https://www.youtube.com/watch?v=KincOXwsxK4" target="_blank">İzle</a></div>
+        </div>
 
-        <section id="sezonlar">
-            <h2>Sezonlar</h2>
-            <p>Animatör Şehri serisi toplam 3 sezondan oluşmaktadır.</p>
-            <ul>
-                <li><strong>Sezon 1:</strong> Serinin başlangıcı olan, 3 ila 6 dakika arası bölümler.18 bölüm içerir.</li>
-                <li><strong>Sezon 2:</strong> Bazı bölümlerin süresi 10 dakikaya kadar çıktığı bölümleri içerir.22 Bölüm içerir.</li>
-                <li><strong>Sezon 3:</strong> Serinin hikayesinin yavaş yavaş ortaya çıktığı bölümleri içerir, henüz tamamlanmamıştır.11 Bölüm içerir.</li>
-            </ul>
-        </section>
-
-        <section id="yaratici">
-            <h2>Yaratıcı - Animatör Sinan Erdem</h2>
-            <p>
-                Animatör Sinan Erdem, Türkiye'den bir animasyon sanatçısı ve YouTuber'dır. 
-                Basit çizim programları ile yarattığı <em>Animatör Şehri</em> serisiyle büyük bir takipçi kitlesine ulaşmıştır.
-                Mizahi ve yaratıcı anlatımıyla dikkat çeken Sinan Erdem, genç nesil animasyon dünyasında önemli bir figürdür.
-            </p>
-            <p>Youtube Kanalı: <a href="https://www.youtube.com/@animatorsinanerdo" class="external-link" target="_blank" rel="noopener noreferrer">Animatör Sinan Erdem</a></p>
-        </section>
-
-        <section id="topluluk">
-            <h2>Topluluk</h2>
-            <p>
-                Fikrinizi, yorumlarınızı ve fan içeriklerinizi bizimle paylaşabilirsiniz! 
-                Aşağıdaki sosyal medya bağlantılarından seriyi takip edebilir veya tartışmalara katılabilirsiniz.
-            </p>
-            <ul>
-                <li><a href="https://www.youtube.com/@animatorsinanerdo" class="external-link" target="_blank" rel="noopener noreferrer">YouTube Kanalı</a></li>
-                <!-- İstersen diğer sosyal medya bağlantılarını buraya ekleyebilirsin -->
-            </ul>
-        </section>
+        <!-- SEZON 3 (11 Bölüm) -->
+        <h3 class="season-title">SEZON 3 (11 Bölüm - Devam Ediyor)</h3>
+        <div class="episode-list">
+            <div class="episode-card"><h3>Bölüm 1</h3><a href="https://www.youtube.com/watch?v=u5oLtQ0JuUA" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 2</h3><a href="https://www.youtube.com/watch?v=DQsCwpz0GTY" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 3</h3><a href="https://www.youtube.com/watch?v=vLk4P2OB8DI" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 4</h3><a href="https://www.youtube.com/watch?v=4bjWtGHIc2c" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 5</h3><a href="https://www.youtube.com/watch?v=0KZkSsNcX2s" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 6</h3><a href="https://www.youtube.com/watch?v=lSFwyD5UEf8" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 7 (Kayıp)</h3><a href="https://www.youtube.com/watch?v=j-1OjsjrExI" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 8</h3><a href="https://www.youtube.com/watch?v=srpGqR2JuQ8" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 9</h3><a href="https://www.youtube.com/watch?v=4KqrhYoa3FU" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 10</h3><a href="https://www.youtube.com/watch?v=xxvxDbwBCg8" target="_blank">İzle</a></div>
+            <div class="episode-card"><h3>Bölüm 11</h3><a href="https://www.youtube.com/watch?v=GGlXbXaGyXs" target="_blank">İzle</a></div>
+        </div>
+    </div>
+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- KARAKTERLER SAYFASI -->
+        <div class="page" id="characters">
+            <div class="card">
+                <h2>Karakterler</h2>
+                
+                <div class="character-grid">
+                    <div class="character-card">
+                        <img src="https://via.placeholder.com/150" alt="Sinan">
+                        <h3>Sinan</h3>
+                        <p>Serinin yaratıcısının gerçek karakteridir. Serinin baş karakterlerinden biridir. </p>
+                    </div>
+                    
+                    <div class="character-card">
+                        <img src="https://via.placeholder.com/150" alt="Diğer Karakter">
+                        <h3>Diğer Karakterler</h3>
+                        <p>Detaylar yakında eklenecek</p>
+                    </div>
+                    
+                    <!-- Daha fazla karakter kartı eklenebilir -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- SEZONLAR SAYFASI -->
+        <div class="page" id="seasons">
+            <div class="card">
+                <h2>Sezonlar</h2>
+                
+                <div class="episode-list">
+                    <div class="episode-card">
+                        <h3>Sezon 1</h3>
+                        <p>18 bölüm | 2022</p>
+                        <p>3-6 dakika arası klasik bölümler.</p>
+                    </div>
+                    
+                    <div class="episode-card">
+                        <h3>Sezon 2</h3>
+                        <p>22 bölüm | 2023</p>
+                        <p>Daha yüksek kalitede daha uzun bölümler. p>
+                    </div>
+                    
+                    <div class="episode-card">
+                        <h3>Sezon 3</h3>
+                        <p>11 bölüm (devam ediyor) | 2024</p>
+                        <p> Hala yayınlanmaya devam ediyor! .</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- YARATICI SAYFASI -->
+        <div class="page" id="creator">
+            <div class="card">
+                <h2>Yaratıcı: Animatör Sinan Erdem</h2>
+                
+                <div style="display: flex; gap: 2rem; align-items: center; margin-top: 1.5rem;">
+                    <img src="https://via.placeholder.com/200" alt="Sinan Erdem" style="width: 200px; border-radius: 12px; border: 3px solid var(--secondary);">
+                    
+                    <div>
+                        <p>Animatör Şehri'nin yaratıcı, animatör ve YouTuber.</p>
+                        
+                        <div style="margin-top: 1rem;">
+                            <h3 style="color: var(--accent);">YouTube Kanalı</h3>
+                            <a href="https://www.youtube.com/@animatorsinanerdo" target="_blank" style="color: var(--secondary); text-decoration: none; font-weight: 600;">@animatorsinanerdo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
-
+    
+    <!-- FOOTER -->
     <footer>
-        &copy; 2025 Animatör Şehri Fandom | Hazırlayan: TacoTheFan
+        &copy; 2025 Animatör Şehri Fandom | Tüm hakları saklıdır. Web sayfasının yapımcısıyla iletişime geçmek için discord: walterwhite_1958
     </footer>
+    
+    <!-- JAVASCRIPT -->
+    <script>
+        // SAYFALAR ARASI GEÇİŞ
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Aktif menüyü güncelle
+                document.querySelectorAll('.nav-link').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Sayfayı göster
+                const pageId = this.getAttribute('data-page');
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+                
+                // Sayfa başına kaydır
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        
+        // ARAMA FONKSİYONU
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const episodeCards = document.querySelectorAll('.episode-card');
+                
+                episodeCards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    if (title.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+    </script>
 </body>
 </html>
